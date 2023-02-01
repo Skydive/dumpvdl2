@@ -1,30 +1,22 @@
-{ pkgs ? import <nixpkgs> {}, libacars }:
+{ pkgs ? import <nixpkgs> {}, libacars, system }:
 
 let
-  version = "";
+
 in
   pkgs.stdenv.mkDerivation {
-    name = "dumpvdl2-${version}";
+    name = "dumpvdl2";
     src = ./.;
 
     outputs = [ "out" ];
     enableParallelBuilding = true;
 
     buildInputs = with pkgs; [ 
-      pkgconfig
+      pkg-config
       cmake
-      libacars
-    ];
-
-    propagatedBuildInputs = with pkgs; [
       zlib
       libxml2
+      librtlsdr
+      glib
+      libacars.defaultPackage.${system}
     ];
-
-
-    # preInstallPhases = preInstallPhases ++ ''
-      
-      # rm libacars/libacars-2.pc
-      # rm $out/lib/pkgconfig/
-    # '';
   }

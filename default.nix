@@ -17,6 +17,7 @@ in
       libxml2
       librtlsdr
       glib
+      protobuf
       libacars.defaultPackage.${system}
     ];
   }

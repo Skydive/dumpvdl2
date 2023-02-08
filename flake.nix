@@ -25,10 +25,10 @@
           libxml2
           librtlsdr
           glib
+          libacars.defaultPackage.${system}
         ];
 
         propagatedBuildInputs = [
-          libacars.defaultPackage.${system}
         ];
       };
     });

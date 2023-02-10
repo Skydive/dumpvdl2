@@ -6,29 +6,35 @@
     flake-utils.inputs.nixpkgs.follows = "nixpkgs";
 
     libacars.url = "github:skydive/libacars";
-    libacars.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs = { self, nixpkgs, flake-utils, libacars, ... }:
     flake-utils.lib.eachDefaultSystem (system:
     let
       pkgs = import nixpkgs { inherit system; };
-
+      dumpvdl2 = pkgs.callPackage ./default.nix { inherit pkgs libacars; };
     in {
-      defaultPackage = pkgs.callPackage ./default.nix { inherit pkgs libacars; };
+      defaultPackage = dumpvdl2;
       devShell = pkgs.mkShell {
         name = "dumpvdl2-shell";
-        buildInputs = with pkgs; [
+        nativeBuildInputs = with pkgs; [
           pkg-config
-          zlib
           cmake
+        ];
+
+        buildInputs = with pkgs; [
+          zlib
           libxml2
           librtlsdr
           glib
+          protobufc
           libacars.defaultPackage.${system}
+
         ];
 
-        propagatedBuildInputs = [
+        inputsFrom = with pkgs; [
+          glib
+          libacars.defaultPackage.${system}
         ];
       };
     });

@@ -96,6 +96,10 @@
 #define __OPT_PRETTIFY_XML           25
 #define __OPT_MILLISECONDS           26
 
+#define __OPT_SOCKET_THREAD          27
+
+
+
 #ifdef WITH_SDRPLAY3
 #define __OPT_SDRPLAY3               70
 #define __OPT_SDRPLAY3_DAB_NOTCH_FILTER      71
@@ -127,6 +131,7 @@
 #ifdef DEBUG
 #define __OPT_DEBUG                 100
 #endif
+
 
 // message filters
 #define MSGFLT_ALL                  (~0)
@@ -310,6 +315,7 @@ enum input_types {
 #ifdef WITH_PROTOBUF_C
 	INPUT_RAW_FRAMES_FILE,
 #endif
+	INPUT_NETWORK_SOCKET,
 	INPUT_UNDEF
 };
 enum sample_formats { SFMT_U8, SFMT_S16_LE, SFMT_UNDEF };

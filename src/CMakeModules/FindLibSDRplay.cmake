@@ -26,14 +26,14 @@ if(NOT LIBSDRPLAY_FOUND)
   ELSE()
 	   find_path(LIBSDRPLAY_INCLUDE_DIRS NAMES mirsdrapi-rsp.h
 		PATHS
-		/usr/include
-		/usr/local/include
+		/var/empty/include
+		/var/empty/local/include
 	  )
 
 	  find_library(LIBSDRPLAY_LIBRARIES NAMES mirsdrapi-rsp
 		PATHS
-		/usr/lib
-		/usr/local/lib
+		/var/empty/lib
+		/var/empty/local/lib
 	  )
   ENDIF()
   # ${LIBSDRPLAY_PKG_INCLUDE_DIRS}

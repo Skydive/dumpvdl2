@@ -14,12 +14,12 @@ if(NOT MIRISDR_FOUND)
     find_path(MIRISDR_INCLUDE_DIR
                 NAMES mirisdr.h
                 HINTS ${MIRISDR_PKG_INCLUDE_DIRS} $ENV{MIRISDR_DIR}/include
-                PATHS /usr/local/include /usr/include /opt/include /opt/local/include)
+                PATHS /var/empty/local/include /var/empty/include /var/empty/include /var/empty/local/include)
 
     find_library(MIRISDR_LIBRARY
                 NAMES mirisdr
                 HINTS ${MIRISDR_PKG_LIBRARY_DIRS} $ENV{MIRISDR_DIR}/include
-                PATHS /usr/local/lib /usr/lib /opt/lib /opt/local/lib)
+                PATHS /var/empty/local/lib /var/empty/lib /var/empty/lib /var/empty/local/lib)
 
     set(MIRISDR_LIBRARIES ${MIRISDR_LIBRARY} )
     set(MIRISDR_INCLUDE_DIRS ${MIRISDR_INCLUDE_DIR} )

@@ -33,6 +33,9 @@
 #include "kvargs.h"
 #include "output-common.h"
 #include "decode.h"             // avlc_decoder_thread, avlc_decoder_shutdown, avlc_decoder_init
+
+#include "network-socket.h"
+
 #ifndef HAVE_PTHREAD_BARRIERS
 #include "pthread_barrier.h"
 #endif
@@ -486,6 +489,7 @@ void usage() {
 	describe_option("--dump-asn1", "Print full ASN.1 structure of CM and CPDLC messages", 1);
 	describe_option("--extended-header", "Print additional fields in message header", 1);
 	describe_option("--prettify-xml", "Pretty-print XML payloads in ACARS and MIAM CORE PDUs", 1);
+	describe_option("--socket-thread", "Pull custom data from TCP network socket", 1);
 	_exit(0);
 }
 
@@ -622,6 +626,8 @@ int main(int argc, char **argv) {
 	enum sample_formats sample_fmt = SFMT_UNDEF;
 	la_list *fmtr_list = NULL;
 	bool input_is_iq = true;
+	bool input_socket_thread = false;
+
 	pthread_t decoder_thread;
 #if defined WITH_RTLSDR || defined WITH_MIRISDR || defined WITH_SDRPLAY || defined WITH_SDRPLAY3 || defined WITH_SOAPYSDR
 	char *device = NULL;
@@ -674,6 +680,9 @@ int main(int argc, char **argv) {
 		{ "oversample",         required_argument,  NULL,   __OPT_OVERSAMPLE },
 		{ "sample-format",      required_argument,  NULL,   __OPT_SAMPLE_FORMAT },
 		{ "msg-filter",         required_argument,  NULL,   __OPT_MSG_FILTER },
+
+		{ "socket-thread",		no_argument, 		NULL,	__OPT_SOCKET_THREAD },
+
 #ifdef WITH_MIRISDR
 		{ "mirisdr",            required_argument,  NULL,   __OPT_MIRISDR },
 		{ "hw-type",            required_argument,  NULL,   __OPT_HW_TYPE },
@@ -932,6 +941,11 @@ int main(int argc, char **argv) {
 			case __OPT_MSG_FILTER:
 				Config.msg_filter = parse_msg_filterspec(msg_filters, msg_filter_usage, optarg);
 				break;
+			case __OPT_SOCKET_THREAD:
+				input_socket_thread = true;
+				input = INPUT_NETWORK_SOCKET;
+				printf("SOCKET THREAD OPTION!");
+				break;
 #ifdef DEBUG
 			case __OPT_DEBUG:
 				Config.debug_filter = parse_msg_filterspec(debug_filters, debug_filter_usage, optarg);
@@ -1072,6 +1086,9 @@ int main(int argc, char **argv) {
 			rtl_init(&ctx, device, centerfreq, gain, correction);
 			break;
 #endif
+		case INPUT_NETWORK_SOCKET:
+			network_socket_init();
+			break;
 #ifdef WITH_MIRISDR
 		case INPUT_MIRISDR:
 			mirisdr_init(&ctx, device, mirisdr_hw_flavour, centerfreq, gain, correction, mirisdr_usb_xfer_mode);

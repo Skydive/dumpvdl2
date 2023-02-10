@@ -36,12 +36,12 @@ if(NOT RTLSDR_FOUND)
     find_path(RTLSDR_INCLUDE_DIR
                 NAMES rtl-sdr.h
                 HINTS ${RTLSDR_PKG_INCLUDE_DIRS} $ENV{RTLSDR_DIR}/include
-                PATHS /usr/local/include /usr/include /opt/include /opt/local/include)
+                PATHS /var/empty/local/include /var/empty/include /var/empty/include /var/empty/local/include)
 
     find_library(RTLSDR_LIBRARY
                 NAMES rtlsdr
                 HINTS ${RTLSDR_PKG_LIBRARY_DIRS} $ENV{RTLSDR_DIR}/include
-                PATHS /usr/local/lib /usr/lib /opt/lib /opt/local/lib)
+                PATHS /var/empty/local/lib /var/empty/lib /var/empty/lib /var/empty/local/lib)
 
     set(RTLSDR_LIBRARIES ${RTLSDR_LIBRARY} )
     set(RTLSDR_INCLUDE_DIRS ${RTLSDR_INCLUDE_DIR} )

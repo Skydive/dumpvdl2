@@ -26,14 +26,14 @@ if(NOT LIBSDRPLAY3_FOUND)
   ELSE()
 	   find_path(LIBSDRPLAY3_INCLUDE_DIRS NAMES sdrplay_api.h
 		PATHS
-		/usr/include
-		/usr/local/include
+		/var/empty/include
+		/var/empty/local/include
 	  )
 
 	  find_library(LIBSDRPLAY3_LIBRARIES NAMES sdrplay_api
 		PATHS
-		/usr/lib
-		/usr/local/lib
+		/var/empty/lib
+		/var/empty/local/lib
 	  )
   ENDIF()
   # ${LIBSDRPLAY3_PKG_INCLUDE_DIRS}

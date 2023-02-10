@@ -10,14 +10,19 @@ in
     outputs = [ "out" ];
     enableParallelBuilding = true;
 
-    buildInputs = with pkgs; [ 
+    nativeBuildInputs = with pkgs; [ 
       pkg-config
       cmake
+    ];
+
+    buildInputs = with pkgs; [
       zlib
       libxml2
       librtlsdr
       glib
-      protobuf
+      protobufc
       libacars.defaultPackage.${system}
     ];
+
+    cmakeFlags = [ "-DRAW_BINARY_FORMAT=ON" ];
   }

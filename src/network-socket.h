@@ -7,7 +7,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 
-bool network_socket = false;
+bool network_socket_state = false;
 
 void network_socket_init() {
     printf("TEST NETWORK SOCKET INIT\n");
@@ -39,9 +39,9 @@ void network_socket_init() {
 
     printf("Connection accepted!");
 
-    socket_state = true;
+    network_socket_state = true;
 
-    while (socket_state) {
+    while (network_socket_state) {
         bzero(buffer,256);
         n = read(newsockfd, buffer, 255);
         if (n < 0) error("ERROR reading from socket");
@@ -50,7 +50,7 @@ void network_socket_init() {
 }
 
 void network_socket_exit() {
-    socket_state = false;
+    network_socket_state = false;
 }
 
 #endif // !_NETWORK_SOCKET_H

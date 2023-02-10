@@ -15,27 +15,6 @@
       dumpvdl2 = pkgs.callPackage ./default.nix { inherit pkgs libacars; };
     in {
       defaultPackage = dumpvdl2;
-      devShell = pkgs.mkShell {
-        name = "dumpvdl2-shell";
-        nativeBuildInputs = with pkgs; [
-          pkg-config
-          cmake
-        ];
-
-        buildInputs = with pkgs; [
-          zlib
-          libxml2
-          librtlsdr
-          glib
-          protobufc
-          libacars.defaultPackage.${system}
-
-        ];
-
-        inputsFrom = with pkgs; [
-          glib
-          libacars.defaultPackage.${system}
-        ];
-      };
+      devShell = dumpvdl2;
     });
 }

@@ -76,6 +76,7 @@ void sighandler(int sig) {
 		fprintf(stderr, "forcing quit\n");
 	}
 	do_exit++;
+	network_socket_exit();
 #ifdef WITH_RTLSDR
 	rtl_cancel();
 #endif
@@ -626,7 +627,6 @@ int main(int argc, char **argv) {
 	enum sample_formats sample_fmt = SFMT_UNDEF;
 	la_list *fmtr_list = NULL;
 	bool input_is_iq = true;
-	bool input_socket_thread = false;
 
 	pthread_t decoder_thread;
 #if defined WITH_RTLSDR || defined WITH_MIRISDR || defined WITH_SDRPLAY || defined WITH_SDRPLAY3 || defined WITH_SOAPYSDR
@@ -942,9 +942,9 @@ int main(int argc, char **argv) {
 				Config.msg_filter = parse_msg_filterspec(msg_filters, msg_filter_usage, optarg);
 				break;
 			case __OPT_SOCKET_THREAD:
-				input_socket_thread = true;
 				input = INPUT_NETWORK_SOCKET;
-				printf("SOCKET THREAD OPTION!");
+				input_is_iq = false;
+				printf("SOCKET THREAD OPTION!\n");
 				break;
 #ifdef DEBUG
 			case __OPT_DEBUG:
@@ -1087,6 +1087,7 @@ int main(int argc, char **argv) {
 			break;
 #endif
 		case INPUT_NETWORK_SOCKET:
+			input_is_iq = false;
 			network_socket_init();
 			break;
 #ifdef WITH_MIRISDR

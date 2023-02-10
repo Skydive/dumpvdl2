@@ -24,5 +24,5 @@ in
       libacars.defaultPackage.${system}
     ];
 
-    cmakeFlags = [ "-DRAW_BINARY_FORMAT=ON" ];
+    cmakeFlags = [ "-DCMAKE_BUILD_TYPE=Debug" "-DRAW_BINARY_FORMAT=ON" ];
   }

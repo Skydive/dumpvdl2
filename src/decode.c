@@ -451,6 +451,7 @@ void *avlc_decoder_thread(void *arg) {
 					if(root != NULL) {
 						decoding_status = DEC_SUCCESS;
 					} else {
+						printf("DECODING FAILURE!\n");
 						decoding_status = DEC_FAILURE;
 						la_proto_tree_destroy(root);
 						root = NULL;

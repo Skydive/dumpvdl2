@@ -170,6 +170,7 @@ static int got_sync(vdl2_channel_t *v) {
 		v->pherr[0] += err * err;
 	}
 
+	// printf("SYNC ERROR: %.2f -> %.2f, %.2f\n", lr_denom, v->pherr[0], v->pherr[1]);
 	if (v->pherr[1] < SYNC_THRESHOLD && v->pherr[0] > v->pherr[1]) {
 		// We have passed the minimum value of the error metric and we are below
 		// the threshold, so we have a successful sync.
@@ -218,7 +219,7 @@ static void demod_reset(vdl2_channel_t *v) {
 	v->frame_pwr_cnt = 0;
 }
 
-static void demod(vdl2_channel_t *v, float re, float im) {
+void demod(vdl2_channel_t *v, float re, float im) {
 	static uint8_t const graycode[ARITY] = { 0, 1, 3, 2, 6, 7, 5, 4 };
 
 	if(v->decoder_state == DEC_IDLE) {
@@ -229,6 +230,7 @@ static void demod(vdl2_channel_t *v, float re, float im) {
 		case DM_INIT:
 			v->syncbufidx++; v->syncbufidx %= SYNC_BUFLEN;
 			v->syncbuf[v->syncbufidx] = atan2(im, re);
+	        // printf("D(%.2f, %.2f) -> %.2f\n", re, im, (atan2(im, re) * 8 / (2 * M_PI)));
 			if(++v->sclk < SYNC_SKIP) {
 				return;
 			}
@@ -266,8 +268,8 @@ static void demod(vdl2_channel_t *v, float re, float im) {
 			v->frame_pwr = (v->frame_pwr * v->frame_pwr_cnt + symbol_pwr) / (v->frame_pwr_cnt + 1);
 			v->frame_pwr_cnt++;
 
-			debug_print(D_DEMOD_DETAIL, "%llu: I: %f Q: %f symb_pwr: %f frame_pwr: %f dphi: %f * pi/4 idx: %d bits: %d\n",
-					v->samplenum, re, im, symbol_pwr, v->frame_pwr, dphi, idx, graycode[idx]);
+			// debug_print(D_DEMOD_DETAIL, "%llu: I: %f Q: %f symb_pwr: %f frame_pwr: %f dphi: %f * pi/4 idx: %d bits: %d\n",
+					// v->samplenum, re, im, symbol_pwr, v->frame_pwr, dphi, idx, graycode[idx]);
 
 			v->prev_phi = phi;
 			if(bitstream_append_msbfirst(v->bs, &(graycode[idx]), 1, BPS) < 0) {
@@ -298,6 +300,7 @@ void *process_samples(void *arg) {
 	while(1) {
 		pthread_barrier_wait(&demods_ready);
 		pthread_barrier_wait(&samples_ready);
+		printf("Processing samples...\n");
 		for(uint32_t i = 0; i < sbuf_len;) {
 			for(int k = INP_LPF_NPOLES; k > 0; k--) {
 				re[k] = re[k-1];
@@ -363,9 +366,26 @@ void process_buf_short(unsigned char *buf, uint32_t len, void *ctx) {
 	pthread_barrier_wait(&samples_ready);
 }
 
+void process_buf_c64(unsigned char *buf, uint32_t len, void *ctx) {
+	UNUSED(ctx);
+	if(len == 0) return;
+	uint32_t *bbuf = (uint32_t *)buf;
+	pthread_barrier_wait(&demods_ready);
+	sbuf_len = len / 4;
+	for(uint32_t i = 0; i < sbuf_len; i++) {
+		sbuf[i] = (float)bbuf[i];
+		printf("%X ", buf[i]);
+	}
+	printf("\n");
+	pthread_barrier_wait(&samples_ready);
+}
+
+
 void input_lpf_init(uint32_t sample_rate) {
-	assert(sample_rate != 0);
-	chebyshev_lpf_init((float)INP_LPF_CUTOFF_FREQ / (float)sample_rate, INP_LPF_RIPPLE_PERCENT, INP_LPF_NPOLES, &A, &B);
+	// assert(sample_rate != 0);
+	// TODO: Revert after testing...
+	if(sample_rate != 0)
+		chebyshev_lpf_init((float)INP_LPF_CUTOFF_FREQ / (float)sample_rate, INP_LPF_RIPPLE_PERCENT, INP_LPF_NPOLES, &A, &B);
 }
 
 void sincosf_lut_init() {

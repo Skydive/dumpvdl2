@@ -196,6 +196,7 @@ void decode_vdl2_burst(vdl2_channel_t *v) {
 	switch(v->decoder_state) {
 		case DEC_HEADER:
 			v->lfsr = LFSR_IV;
+			// TODO: Enable this again!
 			bitstream_descramble(v->bs, &v->lfsr);
 			uint32_t header;
 			if(bitstream_read_word_msbfirst(v->bs, &header, HEADER_LEN) < 0) {
@@ -204,6 +205,9 @@ void decode_vdl2_burst(vdl2_channel_t *v) {
 				v->decoder_state = DEC_IDLE;
 				return;
 			}
+			char* hxd = hexdump(&header, 4);
+			printf("%s\n", hxd);
+			free(hxd);
 			// force bits of reserved symbol to 0 to improve chances of successful decode
 			header &= ONES(TRLEN+HDRFECLEN);
 			v->syndrome = decode_header(&header);
@@ -212,6 +216,7 @@ void decode_vdl2_burst(vdl2_channel_t *v) {
 			}
 			// sanity check - reserved symbol bits shall still be set to 0
 			if((header & ONES(TRLEN+HDRFECLEN)) != header) {
+				printf("HEADER REJECTED: hexdump\n");
 				debug_print(D_BURST, "Rejecting decoded header with non-zero reserved bits\n");
 				statsd_increment_per_channel(v->freq, "decoder.crc.bad");
 				v->decoder_state = DEC_IDLE;
@@ -223,6 +228,7 @@ void decode_vdl2_burst(vdl2_channel_t *v) {
 			// it does not happen - usually it means we've locked on something which is not a preamble. It's safer
 			// to reject it rather than to block the decoder in DEC_DATA state and reading garbage for a long time,
 			// possibly overlooking valid frames.
+
 			if((v->syndrome != 0 && v->datalen > MAX_FRAME_LENGTH_CORRECTED) || v->datalen > MAX_FRAME_LENGTH) {
 				debug_print(D_BURST, "v->datalen=%u v->syndrome=%u - frame rejected\n", v->datalen, v->syndrome);
 				statsd_increment_per_channel(v->freq, "decoder.errors.too_long");
@@ -256,6 +262,7 @@ void decode_vdl2_burst(vdl2_channel_t *v) {
 #ifdef WITH_STATSD
 			gettimeofday(&v->tstart, NULL);
 #endif
+			// printf("DEC_DATA DEC_DATA DEC_DATA!!!!\n\n\n");
 			bitstream_descramble(v->bs, &v->lfsr);
 			uint8_t *data = XCALLOC(v->datalen_octets, sizeof(uint8_t));
 			uint8_t *fec = XCALLOC(v->fec_octets, sizeof(uint8_t));

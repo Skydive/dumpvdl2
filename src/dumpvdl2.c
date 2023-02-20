@@ -943,7 +943,7 @@ int main(int argc, char **argv) {
 				break;
 			case __OPT_SOCKET_THREAD:
 				input = INPUT_NETWORK_SOCKET;
-				input_is_iq = false;
+				input_is_iq = true; // Init rs e.t.c.
 				printf("SOCKET THREAD OPTION!\n");
 				break;
 #ifdef DEBUG

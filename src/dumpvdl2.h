@@ -362,6 +362,7 @@ typedef struct {
 bitstream_t *bitstream_init(uint32_t len);
 int bitstream_append_msbfirst(bitstream_t *bs, uint8_t const *bytes, uint32_t numbytes, uint32_t numbits);
 int bitstream_append_lsbfirst(bitstream_t *bs, uint8_t const *bytes, uint32_t numbytes, uint32_t numbits);
+int bitstream_read_msbfirst(bitstream_t *bs, uint8_t *bytes, uint32_t numbytes, uint32_t numbits);
 int bitstream_read_lsbfirst(bitstream_t *bs, uint8_t *bytes, uint32_t numbytes, uint32_t numbits);
 int bitstream_read_word_msbfirst(bitstream_t *bs, uint32_t *ret, uint32_t numbits);
 int bitstream_copy_next_frame(bitstream_t *src, bitstream_t *dst);
@@ -380,7 +381,10 @@ void process_buf_uchar_init();
 void process_buf_uchar(unsigned char *buf, uint32_t len, void *ctx);
 void process_buf_short_init();
 void process_buf_short(unsigned char *buf, uint32_t len, void *ctx);
+void process_buf_c64(unsigned char* buf, uint32_t len, void *ctx);
 void *process_samples(void *arg);
+
+void demod(vdl2_channel_t* ctx, float re, float im);
 
 // crc.c
 uint16_t crc16_ccitt(uint8_t *data, uint32_t len, uint16_t crc_init);

@@ -57,7 +57,7 @@ retry:
 }
 
 void network_socket_main(int sockfd) {
-    char buffer[256];
+    uint8_t buffer[256];
 
     network_socket_state = true;
     while (network_socket_state) {
@@ -71,7 +71,7 @@ void network_socket_main(int sockfd) {
             exit(1);
         }
         int capacity = 4096;
-        char* full_message = (char*)malloc(capacity*sizeof(char));
+        uint8_t* full_message = (uint8_t*)malloc(capacity*sizeof(uint8_t));
         int ptr = 0;
         while(true) {
             bzero(buffer, 256);
@@ -83,8 +83,8 @@ void network_socket_main(int sockfd) {
                 full_message[ptr++] = buffer[i];
                 if(ptr >= capacity) {
                     capacity *= 2;
-                    char* new_buffer = (char*)malloc(capacity*sizeof(char));
-                    memcpy(new_buffer, full_message, ptr*sizeof(char));
+                    uint8_t* new_buffer = (uint8_t*)malloc(capacity*sizeof(uint8_t));
+                    memcpy(new_buffer, full_message, ptr*sizeof(uint8_t));
                     free(full_message);
                     full_message = new_buffer;
                 }
@@ -154,7 +154,7 @@ void test_bitstream_scrambler() {
 
 }
 
-void network_socket_process(char* buf, int len) {
+void network_socket_process(uint8_t* buf, int len) {
     vdl2_channel_t* v = socket_channel;
 
     // printf("Data into socket (HEXDUMP):\n");
@@ -176,8 +176,10 @@ void network_socket_process(char* buf, int len) {
         // printf("[%d -> %d] (%.2f, %.2f) -> %.2f\n", i, v->syncbufidx, fbuf[i], fbuf[i+1], (atan2(fbuf[i+1], fbuf[i]) * 8 / (2 * M_PI)));
         if(++cnt == OVERSAMPLE) {
             cnt = 0;
-            float re = (float)buf[i]/255.f;
-            float im = (float)buf[i+1]/255.f;
+            float re = ((float)buf[i] - 127.5f)/127.5f;
+            float im = ((float)buf[i+1] - 127.5f)/127.5f;
+            // float re = ((float)buf[i])/255.f;
+            // float im = ((float)buf[i+1])/255.f;
             // float re = fbuf[i], im = fbuf[i+1];
             demod(socket_channel, re, im);
         }

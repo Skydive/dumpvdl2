@@ -300,7 +300,7 @@ void *process_samples(void *arg) {
 	while(1) {
 		pthread_barrier_wait(&demods_ready);
 		pthread_barrier_wait(&samples_ready);
-		printf("Processing samples...\n");
+		// printf("Processing samples...\n");
 		for(uint32_t i = 0; i < sbuf_len;) {
 			for(int k = INP_LPF_NPOLES; k > 0; k--) {
 				re[k] = re[k-1];

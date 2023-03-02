@@ -205,9 +205,7 @@ void decode_vdl2_burst(vdl2_channel_t *v) {
 				v->decoder_state = DEC_IDLE;
 				return;
 			}
-			char* hxd = hexdump(&header, 4);
-			printf("%s\n", hxd);
-			free(hxd);
+			
 			// force bits of reserved symbol to 0 to improve chances of successful decode
 			header &= ONES(TRLEN+HDRFECLEN);
 			v->syndrome = decode_header(&header);
@@ -216,7 +214,6 @@ void decode_vdl2_burst(vdl2_channel_t *v) {
 			}
 			// sanity check - reserved symbol bits shall still be set to 0
 			if((header & ONES(TRLEN+HDRFECLEN)) != header) {
-				printf("HEADER REJECTED: hexdump\n");
 				debug_print(D_BURST, "Rejecting decoded header with non-zero reserved bits\n");
 				statsd_increment_per_channel(v->freq, "decoder.crc.bad");
 				v->decoder_state = DEC_IDLE;
@@ -458,7 +455,7 @@ void *avlc_decoder_thread(void *arg) {
 					if(root != NULL) {
 						decoding_status = DEC_SUCCESS;
 					} else {
-						printf("DECODING FAILURE!\n");
+						// printf("DECODING FAILURE!\n");
 						decoding_status = DEC_FAILURE;
 						la_proto_tree_destroy(root);
 						root = NULL;

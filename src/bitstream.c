@@ -110,39 +110,39 @@ void bitstream_descramble(bitstream_t *bs, uint16_t *lfsr) {
 	if(bs->descrambler_pos < bs->start)
 		bs->descrambler_pos = bs->start;
 
-	size_t sz = bs->end - bs->descrambler_pos;
-	uint8_t* init_frame_bits = malloc(sz*sizeof(uint8_t));
-	uint8_t* scrambler_bits = malloc(sz*sizeof(uint8_t));
-	uint8_t* frame_bits = malloc(sz*sizeof(uint8_t));
+	// size_t sz = bs->end - bs->descrambler_pos;
+	// uint8_t* init_frame_bits = malloc(sz*sizeof(uint8_t));
+	// uint8_t* scrambler_bits = malloc(sz*sizeof(uint8_t));
+	// uint8_t* frame_bits = malloc(sz*sizeof(uint8_t));
 
 
-	printf("Bitstream descramble:\n");
+	// printf("Bitstream descramble:\n");
 	for(uint32_t i = bs->descrambler_pos; i < bs->end; i++) {
 		/* LFSR length: 15; feedback polynomial: x^15 + x + 1 */
 		bit = ((*lfsr >> 0) ^ (*lfsr >> 14)) & 1;
 		*lfsr = (*lfsr >> 1) | (bit << 14);
-		int idx = i - bs->descrambler_pos;
-		init_frame_bits[idx] = bs->buf[i];
-		scrambler_bits[idx] = bit;
-		frame_bits[idx] = bs->buf[i] ^ bit;
+		// int idx = i - bs->descrambler_pos;
+		// init_frame_bits[idx] = bs->buf[i];
+		// scrambler_bits[idx] = bit;
+		// frame_bits[idx] = bs->buf[i] ^ bit;
 		bs->buf[i] ^= bit;		
 	}
 	debug_print(D_BURST_DETAIL, "descrambled from %u to %u\n", bs->descrambler_pos, bs->end-1);
 	bs->descrambler_pos = bs->end;
 
-	printf(" \t");
-	for(int i=0; i<sz; i++)printf("%d ", init_frame_bits[i]);
-	printf("\n");
-	printf("^\t");
-	for(int i=0; i<sz; i++)printf("%d ", scrambler_bits[i]);
-	printf("\n");
-	printf("=\t");
-	for(int i=0; i<sz; i++)printf("%d ", frame_bits[i]);
-	printf("\n");
+	// printf(" \t");
+	// for(int i=0; i<sz; i++)printf("%d ", init_frame_bits[i]);
+	// printf("\n");
+	// printf("^\t");
+	// for(int i=0; i<sz; i++)printf("%d ", scrambler_bits[i]);
+	// printf("\n");
+	// printf("=\t");
+	// for(int i=0; i<sz; i++)printf("%d ", frame_bits[i]);
+	// printf("\n");
 
-	free(init_frame_bits);
-	free(scrambler_bits);
-	free(frame_bits);
+	// free(init_frame_bits);
+	// free(scrambler_bits);
+	// free(frame_bits);
 }
 
 int bitstream_copy_next_frame(bitstream_t *src, bitstream_t *dst) {

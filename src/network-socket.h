@@ -154,7 +154,7 @@ void test_bitstream_scrambler() {
 
 }
 
-void network_socket_process(char* buffer, int len) {
+void network_socket_process(char* buf, int len) {
     vdl2_channel_t* v = socket_channel;
 
     // printf("Data into socket (HEXDUMP):\n");
@@ -167,11 +167,21 @@ void network_socket_process(char* buffer, int len) {
     // printf("SYNC BUF IDX: %d\n", v->syncbufidx);
 
 
-    float* fbuf = (float*)buffer;
-    len = len / 4;
+    // float* fbuf = (float*)buf;
+    // len = len / 4; // float
+    int cnt = 0;
+    const int OVERSAMPLE = 10;
+    // Oversample
     for(int i=0; i<len; i+=2) {
         // printf("[%d -> %d] (%.2f, %.2f) -> %.2f\n", i, v->syncbufidx, fbuf[i], fbuf[i+1], (atan2(fbuf[i+1], fbuf[i]) * 8 / (2 * M_PI)));
-        demod(socket_channel, fbuf[i], fbuf[i+1]);
+        if(++cnt == OVERSAMPLE) {
+            cnt = 0;
+            float re = (float)buf[i]/255.f;
+            float im = (float)buf[i+1]/255.f;
+            // float re = fbuf[i], im = fbuf[i+1];
+            demod(socket_channel, re, im);
+        }
+        // demod(socket_channel, fbuf[i], fbuf[i+1]);
     }
     // fflush(stdout);
 

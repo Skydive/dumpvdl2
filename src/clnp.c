@@ -630,7 +630,9 @@ la_proto_node *clnp_compressed_data_pdu_parse(uint8_t *buf, uint32_t len, uint32
 	}
 	if(pdu->is_segmentation_permitted) {
 		pdu->pdu_id = extract_uint16_msbfirst(ptr);
+		debug_print(D_PROTO_DETAIL, "SEGMENTATION IS PERMITTED!\n");
 		ptr += 2; remaining -= 2;
+		debug_print(D_PROTO_DETAIL, "POINTER IS AT: %02x, OFFSET %02x\n", (uint8_t)*ptr, ptr-buf);
 	}
 	if(pdu->derived) {
 		pdu->offset = extract_uint16_msbfirst(ptr);

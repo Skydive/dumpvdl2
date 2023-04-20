@@ -635,6 +635,9 @@ la_proto_node *icao_apdu_parse(uint8_t *buf, uint32_t len, uint32_t *msg_type) {
 	// Check if it's a X.225 Amdt 1 (1997) Short-form SPDU.
 	// All SPDU types have the 8-th bit of SI&P field (the first octet) set to 1.
 	uint8_t spdu_id = ptr[0] & 0xf8;
+
+	// debug_print(D_PROTO_DETAIL, "(spdu_id+1): %02x\n", ptr[1]);
+
 	if((spdu_id & 0x80) != 0) {
 		debug_print(D_PROTO, "Decoding %d octets as X.225 SPDU\n", remaining);
 		node = x225_spdu_parse(ptr, remaining, msg_type);

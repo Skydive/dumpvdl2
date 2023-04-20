@@ -464,6 +464,7 @@ static cotp_pdu_parse_result cotp_pdu_parse(uint8_t *buf, uint32_t len, uint32_t
 		goto fail;
 	}
 	uint8_t code = ptr[0];
+	debug_print(D_PROTO_DETAIL, "li: %02x, code: %02x.\n", li, code);
 	switch(code & 0xf0) {
 		case COTP_TPDU_CR:
 		case COTP_TPDU_CC:

@@ -17,7 +17,7 @@ endif(NOT CMAKE_BUILD_TYPE)
 option(EMIT_ASN_DEBUG, "Enable debugging of ASN.1 decoder (requires
 CMAKE_BUILD_TYPE=Debug" OFF)
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -shared -fPIC -Wl,-e,main")
 set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -Og -DDEBUG")
 
 add_subdirectory (src)
